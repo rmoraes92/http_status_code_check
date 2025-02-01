@@ -2,6 +2,11 @@
 name = "http_status_code_check"
 version = "0.1.0"
 edition = "2021"
+authors = ["Ramon Moraes <ramonmoraes.foss@gmail.com>"]
+description = "dead simple binary to check http status code returned from health-check endpoint."
+license = "MIT"
+documentation = "https://docs.rs/http_status_code_check/latest/http_status_code_check/"
+homepage = "https://github.com/rmoraes92/http_status_code_check"
 
 [dependencies]
 clap = { version = "4.5.27", features = ["derive"] }
