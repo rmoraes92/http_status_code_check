@@ -18,7 +18,7 @@ jobs:
     - name: Extra Cargo
       run: cargo install cargo-caw-publish
     - name: Run tests
-      run: cargo test --lib --verbose
+      run: cargo test --verbose
     - name: Build
       run: cargo build --verbose
     - name: Publish
