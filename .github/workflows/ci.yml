@@ -22,8 +22,8 @@ jobs:
       run: cargo test --verbose
     - name: Build
       run: cargo build --profile release --verbose
-    - name: Publish to crates.io
-      run: cargo caw-publish
+#    - name: Publish to crates.io
+#      run: cargo caw-publish
     - name: Creating a zip file
       run: zip http_status_code.zip target/release/http_status_code
     - name: Publish to Github Release
