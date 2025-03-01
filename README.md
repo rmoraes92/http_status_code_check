@@ -1,6 +1,6 @@
 # HTTP Status Code Checker
 
-dead simple binary to check http status code returned from health-check
+dead simple binary to check http status code(s) returned from health-check
 endpoint.
 
 ## Why not just use cURL?
@@ -14,9 +14,21 @@ status codes and let you dealing only with the program exit code itself:
 - 0 - if the status code is inside the list of expected ones
 - 1 - if the status code is outside the list of expected ones
 
+Also. In a scenario where one of the containers get compromised a tool like curl
+can become a liability helping the intruder having an easier time fetching more
+external data/tools.
+
 ## Install
 
 `cargo install http_status_code_check`
+
+or
+
+```
+curl -L https://github.com/rmoraes92/http_status_code_check/releases/download/0.1.2/http_status_code_check \
+  > /bin/http_status_code_check && \
+  chmod 755 /bin/http_status_code_check
+```
 
 ## Usage
 
@@ -28,6 +40,12 @@ status codes and let you dealing only with the program exit code itself:
 
 `http_status_code_check -u http://google.com -s 201,200`
 
+## Example Mocking AWS ECS
+
+An example using docker compose is located at `demo/` folder.
+
+It uses to barebones container images with the healthcheck capability of docker
+compose.
 
 ## License
 

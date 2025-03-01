@@ -1,0 +1,21 @@
+services:
+  python:
+    image: simple-python-http
+    build:
+      dockerfile: Dockerfile.python
+      context: .
+    healthcheck:
+      test: [ "CMD", "http_status_code_check", "-u", "http://localhost:8000/", "-s", "200" ]
+      interval: 2s
+      timeout: 5s
+      retries: 3
+  go:
+    image: simple-go-http
+    build:
+      dockerfile: Dockerfile.go
+      context: .
+    healthcheck:
+      test: ["CMD", "http_status_code_check", "-u", "http://localhost:8080/", "-s", "200"]
+      interval: 2s
+      timeout: 5s
+      retries: 3
