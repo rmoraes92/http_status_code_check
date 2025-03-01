@@ -3,11 +3,20 @@
 dead simple binary to check http status code returned from health-check
 endpoint.
 
+## Why not just use cURL?
+
+cURL can definitively do the job as long as you are willing to mix the shell
+script to parse the payload. Specially if you want to cover a range of status
+instead of a single HTTP code.
+
+The `http_status_code_check` command removes the necessity of parsing the HTTP
+status codes and let you dealing only with the program exit code itself:
+- 0 - if the status code is inside the list of expected ones
+- 1 - if the status code is outside the list of expected ones
 
 ## Install
 
-...
-
+`cargo install http_status_code_check`
 
 ## Usage
 
