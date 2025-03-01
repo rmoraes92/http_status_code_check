@@ -19,7 +19,7 @@ jobs:
     - name: Run tests
       run: cargo test
     - name: Build
-      run: cargo build --profile release
+      run: cargo build -r --target x86_64-unknown-linux-gnu
     - name: Publish to crates.io
       env:
         CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -28,5 +28,6 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
+        cp target/release/http_status_code_check target/release/http_status_code_check-x86_64-unknown-linux-gnu
         ver=$(cat Cargo.toml | grep -e '^version = ".*"$' | sed 's/version = "\(.*\)"/\1/')
-        gh release create -d --title v$ver --notes-file RELEASE.md $ver target/release/http_status_code_check
+        gh release create -d --title v$ver --notes-file RELEASE.md $ver target/release/http_status_code_check-x86_64-unknown-linux-gnu
