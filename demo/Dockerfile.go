@@ -1,6 +1,6 @@
 FROM golang:1.23
 WORKDIR /src
-RUN curl -L https://github.com/rmoraes92/http_status_code_check/releases/download/0.1.1/http_status_code_check > /bin/http_status_code_check && \
+RUN curl -L https://github.com/rmoraes92/http_status_code_check/releases/download/0.1.2/http_status_code_check-x86_64-unknown-linux-gnu > /bin/http_status_code_check && \
     chmod 755 /bin/http_status_code_check
 RUN go mod init example/http_server
 COPY <<EOF ./main.go
