@@ -27,7 +27,8 @@ jobs:
     - name: Publish to Github Releases
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      # TODO https://github.com/rmoraes92/http_status_code_check/actions/runs/13607277508/job/38040223389
       run: |
         cp target/release/http_status_code_check target/release/http_status_code_check-x86_64-unknown-linux-gnu
         ver=$(cat Cargo.toml | grep -e '^version = ".*"$' | sed 's/version = "\(.*\)"/\1/')
-        gh release create -d --title v$ver --notes-file RELEASE.md $ver target/release/http_status_code_check-x86_64-unknown-linux-gnu
+        gh release create --title v$ver --notes-file RELEASE.md $ver target/release/http_status_code_check-x86_64-unknown-linux-gnu
