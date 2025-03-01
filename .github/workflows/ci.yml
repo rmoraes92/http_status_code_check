@@ -9,6 +9,8 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+# TODO add musl to CI see DEVELOPMENT.md
+
 jobs:
   test_and_publish:
     runs-on: ubuntu-latest
