@@ -1,9 +1,10 @@
 use std::process::exit;
 
-use reqwest;
 use clap::Parser;
+use reqwest;
 
-/// Simple program to greet a person
+/// dead simple binary to check http status code(s) returned from health-check
+/// endpoint.
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
@@ -27,7 +28,7 @@ fn healthcheck(url: String, status_codes: Vec<u16>) -> i32 {
             }
             return 1;
         }
-    }
+    };
 }
 
 fn main() {
@@ -44,8 +45,7 @@ mod tests {
     fn test_200() {
         let server = MockServer::start();
         server.mock(|when, then| {
-            when.method(GET)
-                .path("/health");
+            when.method(GET).path("/health");
             then.status(200)
                 .header("content-type", "text/html")
                 .body("");
@@ -57,8 +57,7 @@ mod tests {
     fn test_201() {
         let server = MockServer::start();
         server.mock(|when, then| {
-            when.method(GET)
-                .path("/health");
+            when.method(GET).path("/health");
             then.status(201)
                 .header("content-type", "text/html")
                 .body("");
@@ -70,8 +69,7 @@ mod tests {
     fn test_20x() {
         let server = MockServer::start();
         server.mock(|when, then| {
-            when.method(GET)
-                .path("/health");
+            when.method(GET).path("/health");
             then.status(299)
                 .header("content-type", "text/html")
                 .body("");
