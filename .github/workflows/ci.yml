@@ -82,7 +82,7 @@ jobs:
       - name: Install Dependencies - musl
         if: matrix.rust_target == 'x86_64-unknown-linux-musl'
         run: |
-          sudo apt-get install -y --no-install-recommends musl-tools
+          sudo apt-get install -y --no-install-recommends musl-tools libssl-dev
           rustup target add x86_64-unknown-linux-musl
 
       - name: Build
