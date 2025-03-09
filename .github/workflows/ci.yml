@@ -3,13 +3,9 @@ name: Rust
 on:
   push:
     branches: ["release/*"]
-  # pull_request:
-  #   branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
-
-# TODO add musl to CI see DEVELOPMENT.md
 
 jobs:
   test:
@@ -89,12 +85,13 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      # TODO create a cargo crate to query data from Cargo.toml
+      - name: Installing Extra Cargo Crates
+        run: cargo install cargo-self-version
 
       - id: capture_version_from_cargo
         name: Capture Version from Cargo.toml
         run: |
-          ver=$(cat Cargo.toml | grep -e '^version = ".*"$' | sed 's/version = "\(.*\)"/\1/')
+          ver=$(cargo self-version)
           echo "pkg_ver=$ver" >> "$GITHUB_OUTPUT"
 
       - name: Create Github Release
@@ -103,7 +100,7 @@ jobs:
           PKG_VER: ${{ steps.capture_version_from_cargo.outputs.pkg_ver }}
         run: |
           gh release create \
-            --title v$PKG_VER --notes-file RELEASE.md $PKG_VER
+            --title v$PKG_VER $PKG_VER
   github_release_upload:
     needs: github_release_create
     name: Github Release - Upload Artifacts
@@ -134,7 +131,6 @@ jobs:
       - name: Publish to Github Releases
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          # TODO resolving to blank
           PKG_VER: ${{ needs.github_release_create.outputs.pkg_ver }}
         run: |
           gh release upload $PKG_VER \
