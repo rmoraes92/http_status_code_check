@@ -2,14 +2,12 @@ name: Rust
 
 on:
   push:
-    branches: ["release/*"]
+    branches: ["feature/*", "release/*"]
   # pull_request:
   #   branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
-
-# TODO add musl to CI see DEVELOPMENT.md
 
 jobs:
   test:
@@ -20,19 +18,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Run tests
         run: cargo test
-  publish_cratesio:
-    needs: test
-    name: Publish to crates.io
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Install Extra Cargo Crates
-        run: cargo install cargo-caw-publish
-      - name: Publish to crates.io
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo caw-publish
+  # publish_cratesio:
+  #   needs: test
+  #   name: Publish to crates.io
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repo
+  #       uses: actions/checkout@v4
+  #     - name: Install Extra Cargo Crates
+  #       run: cargo install cargo-caw-publish
+  #     - name: Publish to crates.io
+  #       env:
+  #         CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+  #       run: cargo caw-publish
   cargo_build:
     needs: test
     name: Cargo - Building Artifacts
@@ -89,12 +87,13 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      # TODO create a cargo crate to query data from Cargo.toml
+      - name: Installing Extra Cargo Crates
+        run: cargo install cargo-self-version
 
       - id: capture_version_from_cargo
         name: Capture Version from Cargo.toml
         run: |
-          ver=$(cat Cargo.toml | grep -e '^version = ".*"$' | sed 's/version = "\(.*\)"/\1/')
+          ver=$(cargo self-version)
           echo "pkg_ver=$ver" >> "$GITHUB_OUTPUT"
 
       - name: Create Github Release
@@ -103,7 +102,7 @@ jobs:
           PKG_VER: ${{ steps.capture_version_from_cargo.outputs.pkg_ver }}
         run: |
           gh release create \
-            --title v$PKG_VER --notes-file RELEASE.md $PKG_VER
+            --title v$PKG_VER $PKG_VER
   github_release_upload:
     needs: github_release_create
     name: Github Release - Upload Artifacts
@@ -134,7 +133,6 @@ jobs:
       - name: Publish to Github Releases
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          # TODO resolving to blank
           PKG_VER: ${{ needs.github_release_create.outputs.pkg_ver }}
         run: |
           gh release upload $PKG_VER \
