@@ -13,6 +13,7 @@ env:
 
 jobs:
   test:
+    name: Running Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -79,10 +80,14 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Install Dependencies - musl
+      - name: Ubuntu - Install Dependencies - musl
         if: matrix.rust_target == 'x86_64-unknown-linux-musl'
         run: |
-          sudo apt-get install -y musl-tools libssl-dev pkg-config
+          sudo apt-get install -y musl-tools libssl-dev pkg-config perl
+
+      - name: Rustup - Install Dependencies - musl
+        if: matrix.rust_target == 'x86_64-unknown-linux-musl'
+        run: |
           rustup target add x86_64-unknown-linux-musl
 
       - name: Build
