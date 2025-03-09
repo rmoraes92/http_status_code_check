@@ -33,8 +33,54 @@ jobs:
   #      env:
   #        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
   #      run: cargo caw-publish
+  cargo_build:
+    needs: tests
+    name: Cargo - Building Artifacts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build:
+          - linux gnu x86_64
+          - linux musl x64
+        include:
+          - build: linux musl x64
+            os: ubuntu-latest
+            rust: stable
+            rust_target: x86_64-unknown-linux-musl
+          - build: linux gnu x86_64
+            os: ubuntu-latest
+            rust: stable
+            rust_target: x86_64-unknown-linux-gnu
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Ubuntu - Install Dependencies - musl
+        if: matrix.rust_target == 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get install -y musl-tools libssl-dev pkg-config perl gcc
+
+      - name: Rustup - Install Dependencies - musl
+        if: matrix.rust_target == 'x86_64-unknown-linux-musl'
+        run: |
+          rustup target add x86_64-unknown-linux-musl
+
+      - name: Build
+        run: cargo build -r --target ${{ matrix.rust_target }}
+
+      - name: Adjust Target Name
+        run: |
+          cp \
+            target/${{ matrix.rust_target }}/release/http_status_code_check \
+            target/${{ matrix.rust_target }}/release/http_status_code_check-${{ matrix.rust_target }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.rust_target }}
+          path: target/${{ matrix.rust_target }}/release/http_status_code_check-${{ matrix.rust_target }}
   github_release_create:
-    needs: test
+    needs: cargo_build
     name: Github Release - Creating Release
     runs-on: ubuntu-latest
     outputs:
@@ -80,24 +126,10 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Ubuntu - Install Dependencies - musl
-        if: matrix.rust_target == 'x86_64-unknown-linux-musl'
-        run: |
-          sudo apt-get install -y musl-tools libssl-dev pkg-config perl
-
-      - name: Rustup - Install Dependencies - musl
-        if: matrix.rust_target == 'x86_64-unknown-linux-musl'
-        run: |
-          rustup target add x86_64-unknown-linux-musl
-
-      - name: Build
-        run: cargo build -r --target ${{ matrix.rust_target }}
-
-      - name: Adjust Target Name
-        run: |
-          cp \
-            target/${{ matrix.rust_target }}/release/http_status_code_check \
-            target/${{ matrix.rust_target }}/release/http_status_code_check-${{ matrix.rust_target }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.rust_target }}
+          path: target/${{ matrix.rust_target }}/release/http_status_code_check-${{ matrix.rust_target }}
 
       - name: Publish to Github Releases
         env:
