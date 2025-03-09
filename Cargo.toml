@@ -1,6 +1,6 @@
 [package]
 name = "http_status_code_check"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["Ramon Moraes <ramonmoraes.foss@gmail.com>"]
 description = "dead simple binary to check http status code returned from health-check endpoint."
@@ -10,6 +10,11 @@ homepage = "https://github.com/rmoraes92/http_status_code_check"
 
 [dependencies]
 clap = { version = "4.5.27", features = ["derive"] }
+
+[target.x86_64-unknown-linux-gnu.dependencies]
+reqwest = { version = "0.12.12", features = ["blocking"] }
+
+[target.x86_64-unknown-linux-musl.dependencies]
 reqwest = { version = "0.12.12", features = ["blocking", "native-tls-vendored"] }
 
 [dev-dependencies]
