@@ -34,7 +34,7 @@ jobs:
   #        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
   #      run: cargo caw-publish
   cargo_build:
-    needs: tests
+    needs: test
     name: Cargo - Building Artifacts
     runs-on: ubuntu-latest
     strategy:
