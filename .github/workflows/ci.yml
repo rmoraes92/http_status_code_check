@@ -75,7 +75,7 @@ jobs:
             target/${{ matrix.rust_target }}/release/http_status_code_check-${{ matrix.rust_target }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.rust_target }}
           path: target/${{ matrix.rust_target }}/release/http_status_code_check-${{ matrix.rust_target }}
