@@ -2,7 +2,7 @@ name: Rust
 
 on:
   push:
-    branches: ["release/*"]
+    branches: ["bugfix/ci-openssl-musl-build", "release/*"]
   # pull_request:
   #   branches: [ "main" ]
 
@@ -19,19 +19,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Run tests
         run: cargo test
-  publish_cratesio:
-    needs: test
-    name: Publish to crates.io
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Install Extra Cargo Crates
-        run: cargo install cargo-caw-publish
-      - name: Publish to crates.io
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo caw-publish
+  #publish_cratesio:
+  #  needs: test
+  #  name: Publish to crates.io
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Checkout Repo
+  #      uses: actions/checkout@v4
+  #    - name: Install Extra Cargo Crates
+  #      run: cargo install cargo-caw-publish
+  #    - name: Publish to crates.io
+  #      env:
+  #        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+  #      run: cargo caw-publish
   github_release_create:
     needs: test
     name: Github Release - Creating Release
@@ -82,7 +82,7 @@ jobs:
       - name: Install Dependencies - musl
         if: matrix.rust_target == 'x86_64-unknown-linux-musl'
         run: |
-          sudo apt-get install -y --no-install-recommends musl-tools libssl-dev
+          sudo apt-get install -y musl-tools libssl-dev
           rustup target add x86_64-unknown-linux-musl
 
       - name: Build
