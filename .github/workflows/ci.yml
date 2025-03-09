@@ -127,6 +127,7 @@ jobs:
         uses: actions/checkout@v4
 
       - uses: actions/download-artifact@v4
+        name: Downloading Target
         with:
           name: ${{ matrix.rust_target }}
 
@@ -136,6 +137,8 @@ jobs:
           # TODO resolving to blank
           PKG_VER: ${{ needs.github_release_create.outputs.pkg_ver }}
         run: |
+          ls
+          ls /home/runner/work/http_status_code_check/http_status_code_check
           gh release upload \
             $PKG_VER \
             target/${{ matrix.rust_target }}/release/http_status_code_check-${{ matrix.rust_target }}
